@@ -1,0 +1,13 @@
+{
+	"name": "MHNRFrame",
+	"globIgnorePaths": ["**/*.tmp.*"],
+	"tree": {
+		"$className": "Folder",
+		"MainModule": {
+			"$path": "src"
+		},
+		"Loader": {
+			"$path": "loader/Loader.server.luau"
+		}
+	}
+}

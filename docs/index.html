@@ -1,0 +1,1868 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MHNRFrame Docs</title>
+<meta name="description" content="MHNRFrame is a single-module game framework for Roblox: services, controllers, networking, player data, assets and an admin console in one MainModule.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='20' height='20' rx='5' fill='%233554d1'/%3E%3Cpath d='M7 16.5V7.5l5 6 5-6v9' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script>
+(function () {
+	try {
+		var savedTheme = localStorage.getItem("mhnrframe-theme");
+		if (savedTheme === "light" || savedTheme === "dark") {
+			document.documentElement.setAttribute("data-theme", savedTheme);
+		}
+	} catch (error) {}
+})();
+</script>
+<style>
+:root {
+	--bg: #fbfbf9;
+	--surface: #ffffff;
+	--sidebar: #f6f6f3;
+	--text: #1c1e24;
+	--muted: #5c636f;
+	--faint: #8a909b;
+	--border: #e4e4de;
+	--code-bg: #f4f4f0;
+	--code-border: #e6e6e0;
+	--inline-code: rgba(28, 30, 36, 0.06);
+	--accent: #3554d1;
+	--accent-soft: rgba(53, 84, 209, 0.08);
+	--accent-text: #2c47b5;
+	--note-bg: #f2f5ff;
+	--note-border: #c9d3fb;
+	--warn-bg: #fff7ec;
+	--warn-border: #f3d6a8;
+	--shadow: 0 1px 2px rgba(20, 22, 28, 0.04), 0 8px 24px rgba(20, 22, 28, 0.06);
+
+	--tk-keyword: #8a3ab9;
+	--tk-string: #2b7a4b;
+	--tk-number: #b0560a;
+	--tk-comment: #8a909b;
+	--tk-builtin: #1d6bbd;
+	--tk-func: #a3366b;
+	--tk-type: #00788f;
+
+	--topbar-height: 56px;
+	--sidebar-width: 268px;
+	--font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+	color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--bg: #0e1014;
+		--surface: #14171d;
+		--sidebar: #111318;
+		--text: #e4e6eb;
+		--muted: #9ca3af;
+		--faint: #6b7280;
+		--border: #232731;
+		--code-bg: #12151b;
+		--code-border: #222632;
+		--inline-code: rgba(255, 255, 255, 0.07);
+		--accent: #8fa4ff;
+		--accent-soft: rgba(143, 164, 255, 0.1);
+		--accent-text: #a9b9ff;
+		--note-bg: #151a2a;
+		--note-border: #2b3558;
+		--warn-bg: #211b12;
+		--warn-border: #4a3a1f;
+		--shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+
+		--tk-keyword: #c792ea;
+		--tk-string: #9fd4a3;
+		--tk-number: #f2a96b;
+		--tk-comment: #6b7280;
+		--tk-builtin: #82aaff;
+		--tk-func: #f0b86e;
+		--tk-type: #6fd3e0;
+		color-scheme: dark;
+	}
+}
+
+:root[data-theme="dark"] {
+	--bg: #0e1014;
+	--surface: #14171d;
+	--sidebar: #111318;
+	--text: #e4e6eb;
+	--muted: #9ca3af;
+	--faint: #6b7280;
+	--border: #232731;
+	--code-bg: #12151b;
+	--code-border: #222632;
+	--inline-code: rgba(255, 255, 255, 0.07);
+	--accent: #8fa4ff;
+	--accent-soft: rgba(143, 164, 255, 0.1);
+	--accent-text: #a9b9ff;
+	--note-bg: #151a2a;
+	--note-border: #2b3558;
+	--warn-bg: #211b12;
+	--warn-border: #4a3a1f;
+	--shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+
+	--tk-keyword: #c792ea;
+	--tk-string: #9fd4a3;
+	--tk-number: #f2a96b;
+	--tk-comment: #6b7280;
+	--tk-builtin: #82aaff;
+	--tk-func: #f0b86e;
+	--tk-type: #6fd3e0;
+	color-scheme: dark;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-padding-top: calc(var(--topbar-height) + 20px);
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--font-sans);
+	font-size: 16px;
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: var(--accent-text);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+code,
+pre,
+kbd {
+	font-family: var(--font-mono);
+	font-variant-ligatures: none;
+	font-feature-settings: "liga" 0, "calt" 0;
+}
+
+:not(pre) > code {
+	background: var(--inline-code);
+	border-radius: 5px;
+	padding: 0.12em 0.38em;
+	font-size: 0.86em;
+	overflow-wrap: anywhere;
+}
+
+kbd {
+	display: inline-block;
+	border: 1px solid var(--border);
+	border-bottom-width: 2px;
+	border-radius: 5px;
+	padding: 0 0.4em;
+	font-size: 0.82em;
+	background: var(--surface);
+}
+
+.topbar {
+	position: sticky;
+	top: 0;
+	z-index: 30;
+	height: var(--topbar-height);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 0 20px;
+	background: color-mix(in srgb, var(--bg) 86%, transparent);
+	backdrop-filter: saturate(160%) blur(10px);
+	-webkit-backdrop-filter: saturate(160%) blur(10px);
+	border-bottom: 1px solid var(--border);
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--text);
+	font-weight: 650;
+	letter-spacing: -0.01em;
+	font-size: 17px;
+}
+
+.brand:hover {
+	text-decoration: none;
+}
+
+.brand-mark {
+	width: 26px;
+	height: 26px;
+	flex: none;
+}
+
+.brand-tag {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--muted);
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	padding: 1px 8px;
+}
+
+.topbar-spacer {
+	flex: 1;
+}
+
+.icon-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 34px;
+	min-width: 34px;
+	padding: 0 10px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--surface);
+	color: var(--text);
+	font: inherit;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.icon-button:hover {
+	border-color: var(--faint);
+	text-decoration: none;
+}
+
+.icon-button svg {
+	width: 16px;
+	height: 16px;
+}
+
+.menu-button {
+	display: none;
+	padding: 0;
+}
+
+.theme-icon-dark {
+	display: none;
+}
+
+:root[data-theme="dark"] .theme-icon-light {
+	display: none;
+}
+
+:root[data-theme="dark"] .theme-icon-dark {
+	display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) .theme-icon-light {
+		display: none;
+	}
+
+	:root:not([data-theme="light"]) .theme-icon-dark {
+		display: block;
+	}
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+	min-height: calc(100vh - var(--topbar-height));
+}
+
+.sidebar {
+	position: sticky;
+	top: var(--topbar-height);
+	height: calc(100vh - var(--topbar-height));
+	overflow-y: auto;
+	background: var(--sidebar);
+	border-right: 1px solid var(--border);
+	padding: 20px 14px 40px;
+}
+
+.search {
+	position: relative;
+	margin: 0 4px 18px;
+}
+
+.search svg {
+	position: absolute;
+	left: 10px;
+	top: 50%;
+	width: 15px;
+	height: 15px;
+	transform: translateY(-50%);
+	color: var(--faint);
+	pointer-events: none;
+}
+
+.search input {
+	width: 100%;
+	height: 36px;
+	padding: 0 34px 0 32px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--surface);
+	color: var(--text);
+	font: inherit;
+	font-size: 14px;
+}
+
+.search input:focus {
+	outline: 2px solid var(--accent-soft);
+	border-color: var(--accent);
+}
+
+.search kbd {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--faint);
+}
+
+.nav-group {
+	margin-bottom: 18px;
+}
+
+.nav-group h2 {
+	margin: 0 10px 6px;
+	font-size: 11.5px;
+	font-weight: 650;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--faint);
+}
+
+.nav-group a {
+	display: block;
+	padding: 5px 10px;
+	border-radius: 7px;
+	color: var(--muted);
+	font-size: 14.5px;
+	line-height: 1.4;
+}
+
+.nav-group a:hover {
+	color: var(--text);
+	background: var(--accent-soft);
+	text-decoration: none;
+}
+
+.nav-group a.active {
+	color: var(--accent-text);
+	background: var(--accent-soft);
+	font-weight: 560;
+}
+
+.nav-empty {
+	display: none;
+	margin: 4px 10px;
+	color: var(--faint);
+	font-size: 14px;
+}
+
+.content {
+	min-width: 0;
+	padding: 48px 56px 96px;
+}
+
+.article {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.hero {
+	padding-top: 0;
+	padding-bottom: 8px;
+}
+
+.eyebrow {
+	display: inline-block;
+	margin-bottom: 14px;
+	color: var(--accent-text);
+	background: var(--accent-soft);
+	border-radius: 999px;
+	padding: 3px 12px;
+	font-size: 13px;
+	font-weight: 560;
+}
+
+.hero h1 {
+	margin: 0 0 12px;
+	font-size: clamp(36px, 6vw, 52px);
+	line-height: 1.05;
+	letter-spacing: -0.035em;
+	font-weight: 750;
+}
+
+.lede {
+	margin: 0 0 24px;
+	max-width: 640px;
+	font-size: 19px;
+	line-height: 1.55;
+	color: var(--muted);
+}
+
+.hero-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 30px;
+}
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 40px;
+	padding: 0 16px;
+	border-radius: 9px;
+	border: 1px solid var(--border);
+	background: var(--surface);
+	color: var(--text);
+	font-weight: 560;
+	font-size: 15px;
+}
+
+.button:hover {
+	text-decoration: none;
+	border-color: var(--faint);
+}
+
+.button-primary {
+	background: var(--accent);
+	border-color: var(--accent);
+	color: #ffffff;
+}
+
+:root[data-theme="dark"] .button-primary {
+	color: #0e1014;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) .button-primary {
+		color: #0e1014;
+	}
+}
+
+.button-primary:hover {
+	border-color: var(--accent);
+	filter: brightness(1.06);
+}
+
+.features {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.feature {
+	padding: 16px 18px;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	background: var(--surface);
+}
+
+.article .feature h3 {
+	margin: 0 0 4px;
+	font-size: 15.5px;
+	letter-spacing: -0.005em;
+}
+
+.feature p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 14.5px;
+	line-height: 1.55;
+}
+
+section {
+	padding-top: 40px;
+}
+
+section + section {
+	border-top: 1px solid var(--border);
+	margin-top: 40px;
+}
+
+.article h2 {
+	position: relative;
+	margin: 0 0 14px;
+	font-size: 28px;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+}
+
+.article h3 {
+	margin: 32px 0 10px;
+	font-size: 19px;
+	letter-spacing: -0.01em;
+}
+
+.article h2 .anchor,
+.article h3 .anchor {
+	margin-left: 8px;
+	color: var(--faint);
+	opacity: 0;
+	font-weight: 400;
+	transition: opacity 0.15s;
+}
+
+.article h2:hover .anchor,
+.article h3:hover .anchor {
+	opacity: 1;
+	text-decoration: none;
+}
+
+.article p,
+.article ul,
+.article ol {
+	margin: 0 0 16px;
+}
+
+.article ul,
+.article ol {
+	padding-left: 22px;
+}
+
+.article li {
+	margin-bottom: 6px;
+}
+
+.article li::marker {
+	color: var(--faint);
+}
+
+.section-intro {
+	font-size: 17px;
+	color: var(--muted);
+}
+
+.code-block {
+	position: relative;
+	margin: 0 0 20px;
+	border: 1px solid var(--code-border);
+	border-radius: 10px;
+	background: var(--code-bg);
+}
+
+.code-block pre {
+	margin: 0;
+	padding: 16px 18px;
+	overflow-x: auto;
+	font-size: 13.5px;
+	line-height: 1.62;
+	tab-size: 4;
+	-moz-tab-size: 4;
+}
+
+.code-block .code-label {
+	position: absolute;
+	top: 8px;
+	right: 50px;
+	font-family: var(--font-mono);
+	font-size: 11px;
+	color: var(--faint);
+	text-transform: lowercase;
+	pointer-events: none;
+}
+
+.copy-button {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 26px;
+	border: 1px solid var(--code-border);
+	border-radius: 6px;
+	background: var(--surface);
+	color: var(--muted);
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+
+.code-block:hover .copy-button,
+.copy-button:focus-visible,
+.copy-button.copied {
+	opacity: 1;
+}
+
+.copy-button svg {
+	width: 14px;
+	height: 14px;
+}
+
+.copy-button.copied {
+	color: var(--tk-string);
+}
+
+@media (hover: none) {
+	.copy-button {
+		opacity: 1;
+	}
+}
+
+.tk-keyword {
+	color: var(--tk-keyword);
+}
+
+.tk-string {
+	color: var(--tk-string);
+}
+
+.tk-number {
+	color: var(--tk-number);
+}
+
+.tk-comment {
+	color: var(--tk-comment);
+	font-style: italic;
+}
+
+.tk-builtin {
+	color: var(--tk-builtin);
+}
+
+.tk-func {
+	color: var(--tk-func);
+}
+
+.tk-type {
+	color: var(--tk-type);
+}
+
+.table-wrap {
+	margin: 0 0 20px;
+	overflow-x: auto;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14.5px;
+	line-height: 1.5;
+}
+
+th,
+td {
+	text-align: left;
+	vertical-align: top;
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--border);
+}
+
+th {
+	background: var(--sidebar);
+	font-weight: 600;
+	font-size: 13px;
+	color: var(--muted);
+	white-space: nowrap;
+}
+
+tr:last-child td {
+	border-bottom: none;
+}
+
+td code {
+	white-space: nowrap;
+}
+
+td.wrap code {
+	white-space: normal;
+	overflow-wrap: normal;
+}
+
+.chips code {
+	overflow-wrap: normal;
+}
+
+.callout {
+	margin: 0 0 20px;
+	padding: 12px 16px;
+	border: 1px solid var(--note-border);
+	border-radius: 10px;
+	background: var(--note-bg);
+	font-size: 15px;
+}
+
+.callout strong:first-child {
+	display: block;
+	margin-bottom: 2px;
+}
+
+.callout-warn {
+	border-color: var(--warn-border);
+	background: var(--warn-bg);
+}
+
+.steps {
+	counter-reset: step;
+	list-style: none;
+	padding-left: 0 !important;
+}
+
+.steps > li {
+	position: relative;
+	padding-left: 38px;
+	margin-bottom: 14px;
+}
+
+.steps > li::before {
+	counter-increment: step;
+	content: counter(step);
+	position: absolute;
+	left: 0;
+	top: 1px;
+	width: 25px;
+	height: 25px;
+	border-radius: 999px;
+	background: var(--accent-soft);
+	color: var(--accent-text);
+	font-size: 13px;
+	font-weight: 650;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.install-grid {
+	display: grid;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.install-option {
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	background: var(--surface);
+	padding: 16px 18px 4px;
+}
+
+.install-option h3 {
+	margin: 0 0 6px !important;
+	font-size: 16px !important;
+}
+
+.install-option .code-block {
+	margin-bottom: 14px;
+}
+
+.chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+
+.chips li {
+	margin: 0;
+}
+
+.chips code {
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.footer {
+	max-width: 800px;
+	margin: 64px auto 0;
+	padding-top: 24px;
+	border-top: 1px solid var(--border);
+	color: var(--faint);
+	font-size: 14px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.overlay {
+	display: none;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+@media (max-width: 960px) {
+	.content {
+		padding: 36px 32px 80px;
+	}
+}
+
+@media (max-width: 860px) {
+	.layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.menu-button {
+		display: inline-flex;
+	}
+
+	.sidebar {
+		position: fixed;
+		top: var(--topbar-height);
+		left: 0;
+		z-index: 25;
+		width: min(300px, 86vw);
+		transform: translateX(-102%);
+		transition: transform 0.22s ease;
+		box-shadow: var(--shadow);
+	}
+
+	body.nav-open .sidebar {
+		transform: translateX(0);
+	}
+
+	body.nav-open .overlay {
+		display: block;
+		position: fixed;
+		inset: var(--topbar-height) 0 0 0;
+		z-index: 20;
+		background: rgba(10, 12, 16, 0.35);
+	}
+
+	.search kbd {
+		display: none;
+	}
+}
+
+@media (max-width: 600px) {
+	.topbar {
+		padding: 0 12px;
+		gap: 8px;
+	}
+
+	.brand-tag,
+	.github-label {
+		display: none;
+	}
+
+	.content {
+		padding: 28px 16px 64px;
+	}
+
+	.features {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.lede {
+		font-size: 17px;
+	}
+
+	.article h2 {
+		font-size: 24px;
+	}
+
+	.code-block pre {
+		padding: 14px;
+		font-size: 12.5px;
+	}
+
+	.code-block .code-label {
+		display: none;
+	}
+
+	th,
+	td {
+		padding: 9px 11px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidebar {
+		transition: none;
+	}
+
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+	<button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+	</button>
+	<a class="brand" href="#overview">
+		<svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="var(--accent)"/><path d="M7 16.5V7.5l5 6 5-6v9" fill="none" stroke="var(--bg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		MHNRFrame
+		<span class="brand-tag">Docs</span>
+	</a>
+	<div class="topbar-spacer"></div>
+	<a class="icon-button" href="https://github.com/Yazukxa/MHNRFrame">
+		<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.86v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+		<span class="github-label">GitHub</span>
+	</a>
+	<button class="icon-button" id="theme-button" type="button" aria-label="Switch between light and dark theme">
+		<svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+		<svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg>
+	</button>
+</header>
+
+<div class="layout">
+	<nav class="sidebar" id="sidebar" aria-label="Documentation">
+		<div class="search">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+			<input id="nav-filter" type="search" placeholder="Filter pages" aria-label="Filter pages" autocomplete="off">
+			<kbd>/</kbd>
+		</div>
+
+		<div class="nav-group">
+			<h2>Getting started</h2>
+			<a href="#overview">Overview</a>
+			<a href="#installation">Installation</a>
+			<a href="#booting">Booting</a>
+			<a href="#layout">Project layout</a>
+			<a href="#requiring">Requiring the framework</a>
+			<a href="#accessors">Reaching things</a>
+		</div>
+
+		<div class="nav-group">
+			<h2>Building</h2>
+			<a href="#services">Services and controllers</a>
+			<a href="#boot-order">Boot order</a>
+			<a href="#networking">Client and server</a>
+			<a href="#players">Players and characters</a>
+			<a href="#signal-trove">Signal and Trove</a>
+			<a href="#types">Global types</a>
+			<a href="#classes">Classes</a>
+		</div>
+
+		<div class="nav-group">
+			<h2>Built in</h2>
+			<a href="#assets">Assets</a>
+			<a href="#animation">Animation</a>
+			<a href="#sound">Sound</a>
+			<a href="#vfx">VFX</a>
+			<a href="#preloading">Preloading</a>
+			<a href="#player-data">Player data</a>
+			<a href="#state-machine">StateMachine</a>
+			<a href="#admin">Admin commands</a>
+			<a href="#environment">Environment</a>
+		</div>
+
+		<div class="nav-group">
+			<h2>Reference</h2>
+			<a href="#config">Config and data</a>
+			<a href="#checking">Checking the code</a>
+			<a href="#credits">Credits</a>
+		</div>
+
+		<p class="nav-empty" id="nav-empty">No matching pages.</p>
+	</nav>
+	<div class="overlay" id="overlay"></div>
+
+	<main class="content">
+		<article class="article">
+
+<section id="overview" class="hero">
+	<span class="eyebrow">Roblox game framework</span>
+	<h1>MHNRFrame</h1>
+	<p class="lede">One <code>MainModule</code> that holds the whole game: services, controllers, networking, player data, assets and an admin console. Pure Luau, no dependencies to install, no <code>--!strict</code>.</p>
+	<div class="hero-actions">
+		<a class="button button-primary" href="#installation">Get started</a>
+		<a class="button" href="#services">Write a service</a>
+	</div>
+	<div class="features">
+		<div class="feature">
+			<h3>One module</h3>
+			<p>The server copies the MainModule to clients without its <code>Server</code> folder, so server code never leaves the server.</p>
+		</div>
+		<div class="feature">
+			<h3>Found by name</h3>
+			<p>Modules are looked up by name wherever they sit, and shared ones are required the first time you touch them.</p>
+		</div>
+		<div class="feature">
+			<h3>Typed without strict</h3>
+			<p><code>Types</code> and <code>Index</code> give autocomplete and checking across the game in nonstrict mode.</p>
+		</div>
+		<div class="feature">
+			<h3>Batteries included</h3>
+			<p>Player data on ProfileStore, a Cmdr admin console, and asset, animation, sound and VFX helpers.</p>
+		</div>
+	</div>
+</section>
+
+<section id="installation">
+	<h2>Installation</h2>
+	<p>Pick whichever way suits the place.</p>
+	<div class="install-grid">
+		<div class="install-option">
+			<h3>Rojo</h3>
+			<p>Serve the project, then click Connect in the Studio plugin. The Rojo version in <code>aftman.toml</code> (7.7.0) has to match the plugin.</p>
+			<pre><code class="sh">rojo serve</code></pre>
+		</div>
+		<div class="install-option">
+			<h3>Model file</h3>
+			<p>Build the model and drag it into ServerScriptService. It is a folder holding <code>Loader</code> and <code>MainModule</code>, with the code and the empty asset folders but not assets made in Studio.</p>
+			<pre><code class="sh">rojo build model.project.json --output MHNRFrame.rbxm</code></pre>
+		</div>
+		<div class="install-option">
+			<h3>Asset id</h3>
+			<p>Publish the MainModule as a model, then change the loader's first line to <code>require(assetId)</code>.</p>
+		</div>
+	</div>
+	<div class="callout callout-warn">
+		<strong>Keep it on the server</strong>
+		The MainModule must sit in ServerScriptService or ServerStorage. Anywhere else it refuses to start, because its <code>Server</code> folder would be sent to players.
+	</div>
+	<p>While Rojo is connected it owns the scripts: edit the files in <code>src</code> and <code>loader</code>, not the copies in Studio. Do not move or rename the <code>src</code> folder while <code>rojo serve</code> is running; it crashes the server and you have to reconnect.</p>
+</section>
+
+<section id="booting">
+	<h2>Booting</h2>
+	<p><code>Loader</code> sits in ServerScriptService next to the MainModule and is the one script that starts it:</p>
+	<pre><code class="luau">local Framework = require(script.Parent.MainModule)
+
+Framework.Start()</code></pre>
+	<p>Nothing else to wire up. The module does nothing until that runs. If you keep the module somewhere else, point the loader's <code>require</code> at it. Calling <code>Start</code> twice is harmless.</p>
+	<p>When the server starts, in this order:</p>
+	<ol class="steps">
+		<li>It checks it is inside ServerScriptService or ServerStorage.</li>
+		<li>Everything in <code>Environment/StarterGui</code> and <code>Environment/StarterPlayerScripts</code> moves into the real StarterGui and StarterPlayerScripts.</li>
+		<li>It copies itself into <code>ReplicatedStorage.MainModule</code> <strong>without the <code>Server</code> folder</strong>. That copy is what clients run. <code>Assets</code> is moved into the copy rather than duplicated.</li>
+		<li>Services load, initialise, publish their client tables and start. See <a href="#boot-order">Boot order</a>.</li>
+	</ol>
+	<p>Each player then boots from <code>ClientLoader</code>, a LocalScript that arrives through StarterPlayerScripts. A player only copies StarterPlayerScripts when they join, so start the framework as the server boots, not later.</p>
+</section>
+
+<section id="layout">
+	<h2>Project layout</h2>
+	<pre><code class="text">ServerScriptService
+├── Loader                     starts the module
+└── MainModule                 the framework, and the thing every script requires
+    ├── Core                   framework internals, leave alone
+    ├── Types                  global types for the whole game
+    ├── Index                  what each Framework.X.Y is, for autocomplete
+    ├── Common                 everything both sides use
+    │   ├── Config             AdminConfig, AnimationConfig, DataConfig, PreloadConfig
+    │   ├── Data               PlayerDataTemplate
+    │   ├── Enums
+    │   └── Shared
+    │       ├── Assets         instances every player gets
+    │       │   ├── Animations
+    │       │   ├── VFX
+    │       │   ├── Sounds
+    │       │   ├── Models
+    │       │   └── UI
+    │       ├── Handlers       AnimationHandler, SoundHandler
+    │       ├── Classes        StateMachine
+    │       └── Util           AdminUtil
+    ├── Packages               third-party libraries
+    ├── Environment            things that belong in Roblox's own containers
+    │   ├── StarterGui
+    │   └── StarterPlayerScripts   ClientLoader, boots the client
+    ├── Client
+    │   ├── Controllers        CmdrController, DataController, PreloadController, VFXController
+    │   └── Modules            client-only helpers
+    │       └── UI
+    └── Server
+        ├── Assets             instances only the server gets
+        ├── Commands           your own Cmdr commands
+        ├── Packages           server-only libraries: Cmdr, ProfileStore
+        ├── Services           AnimationService, CmdrService, DataService, VFXService
+        └── Modules            server-only helpers and classes</code></pre>
+	<div class="callout">
+		<strong>Secrets go under Server</strong>
+		Anything under <code>Server</code> never leaves the server. Everything else is visible to players.
+	</div>
+	<ul>
+		<li>Subfolders are fine anywhere. Folders are searched, so <code>Common/Config/AnimationConfig</code> is still <code>Framework.Common.AnimationConfig</code>.</li>
+		<li>Names must be unique inside a bucket. Two modules with the same name is an error that names both.</li>
+		<li>A ModuleScript's own children are private to it and are not picked up.</li>
+		<li><code>Shared</code> sits inside <code>Common</code> but is its own bucket: modules under <code>Common/Shared</code> are <code>Framework.Shared.Name</code>, everything else under <code>Common</code> is <code>Framework.Common.Name</code>.</li>
+		<li>Modules inside <code>Assets</code> are never picked up.</li>
+	</ul>
+</section>
+
+<section id="requiring">
+	<h2>Requiring the framework</h2>
+	<p>Every module inside the MainModule starts with this line, wherever it sits:</p>
+	<pre><code class="luau">local Framework = require(script:FindFirstAncestor("MainModule"))</code></pre>
+	<p><code>require(script.Parent.Parent.Parent)</code> works too if you prefer counting parents. Types through the first form work in VS Code with luau-lsp; if Studio's own editor does not autocomplete through it, use the parents form there. The examples call it <code>Framework</code>, but the local name is up to you.</p>
+	<p>A server Script outside the MainModule:</p>
+	<pre><code class="luau">local Framework = require(game.ServerScriptService.MainModule)
+Framework.WaitForStart()</code></pre>
+	<p>A LocalScript outside the MainModule:</p>
+	<pre><code class="luau">local Framework = require(game.ReplicatedStorage:WaitForChild("MainModule"))
+Framework.WaitForStart()</code></pre>
+	<p><code>WaitForStart</code> returns once every <code>Start</code> has been kicked off. <code>Framework.IsServer</code> and <code>Framework.IsClient</code> tell a shared module which side it is on.</p>
+</section>
+
+<section id="accessors">
+	<h2>Reaching things</h2>
+	<div class="table-wrap">
+		<table>
+			<thead>
+				<tr><th>Access</th><th>Side</th><th>What it is</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><code>Framework.Services.Name</code></td><td>server</td><td>loaded at boot</td></tr>
+				<tr><td><code>Framework.Controllers.Name</code></td><td>client</td><td>loaded at boot</td></tr>
+				<tr><td><code>Framework.Modules.Name</code></td><td>each side has its own</td><td>loaded at boot</td></tr>
+				<tr><td><code>Framework.Shared.Name</code></td><td>both</td><td>loaded on first use</td></tr>
+				<tr><td><code>Framework.Common.Name</code></td><td>both</td><td>loaded on first use</td></tr>
+				<tr><td><code>Framework.Packages.Name</code></td><td>both, plus <code>Server/Packages</code> on the server</td><td>loaded on first use</td></tr>
+				<tr><td><code>Framework.Server.Name</code></td><td>client</td><td>the network view of a service, ready at boot</td></tr>
+				<tr><td><code>Framework.Assets</code></td><td>both</td><td>the <code>Common/Shared/Assets</code> folder, also <code>Framework.Shared.Assets</code></td></tr>
+				<tr><td><code>Framework.GetAsset(category, name)</code></td><td>both</td><td>one asset, found by name or path</td></tr>
+				<tr><td><code>Framework.ServerAssets</code></td><td>server</td><td>the <code>Server/Assets</code> folder, <code>nil</code> on the client</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<p>Inside a function these are always safe. At the top of a file they also work, with one exception: a module that is still waiting on something at the top of its own file cannot be handed over half-loaded, and the error names it. Modules load before Services and Controllers, and those load alphabetically, so this only bites when one controller grabs a later, slower controller at the top of its file. Read it inside <code>Init</code> or <code>Start</code> instead.</p>
+	<p>Asking for a module name that does not exist is an error, not <code>nil</code>.</p>
+</section>
+
+<section id="services">
+	<h2>Services and controllers</h2>
+	<p class="section-intro">A service is a plain table in <code>Server/Services</code>. Its name is the ModuleScript's name.</p>
+	<pre><code class="luau">local Framework = require(script:FindFirstAncestor("MainModule"))
+
+local Service = {
+	Dependencies = { "OtherService" },
+	Client = {
+		Changed = Framework.RemoteSignal(),
+		Value = Framework.RemoteProperty(0),
+	},
+}
+
+function Service:Init() end
+
+function Service:Start() end
+
+function Service.Client:Request(player: Player, value: any): boolean
+	if typeof(value) ~= "number" then
+		return false
+	end
+	return self.Server:Handle(player, value)
+end
+
+return Service</code></pre>
+	<p><code>Init</code>, <code>Start</code>, <code>Dependencies</code> and <code>Client</code> are all optional. Controllers are the same thing on the client, in <code>Client/Controllers</code>, without <code>Client</code>.</p>
+	<p><code>Server/Services/VFXService</code> and <code>Client/Controllers/VFXController</code> are complete examples to copy from.</p>
+</section>
+
+<section id="boot-order">
+	<h2>Boot order</h2>
+	<ol class="steps">
+		<li><code>Modules</code> are required.</li>
+		<li><code>Services</code> (server) or <code>Controllers</code> (client) are required, alphabetically.</li>
+		<li><code>Init</code> runs on each, one at a time. Anything named in <code>Dependencies</code> goes first.</li>
+		<li>The server publishes every <code>Client</code> table. The client waits for that before its step 1.</li>
+		<li><code>Start</code> runs on each, all at once.</li>
+	</ol>
+	<p><code>Init</code> and <code>Start</code> only run on Services and Controllers. Modules are never called, so a class in <code>Modules</code> or <code>Shared</code> can have its own <code>Init</code> or <code>Start</code> methods.</p>
+	<p>A broken <code>Init</code> stops the boot. A broken <code>Start</code> only stops that one service. A dependency cycle or a dependency that does not exist is an error that names the chain.</p>
+</section>
+
+<section id="networking">
+	<h2>Client and server</h2>
+	<p>Whatever a service puts in <code>Client</code> is what the client sees under <code>Framework.Server.ServiceName</code>.</p>
+	<div class="table-wrap">
+		<table>
+			<thead>
+				<tr><th>In the <code>Client</code> table</th><th>Server side</th><th>Client side</th></tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>a function</td>
+					<td class="wrap"><code>function Service.Client:Name(player, ...)</code></td>
+					<td class="wrap"><code>Service:Name(...)</code>, waits for the result</td>
+				</tr>
+				<tr>
+					<td><code>Framework.RemoteSignal()</code></td>
+					<td class="wrap"><code>:Fire(player, ...)</code> <code>:FireAll(...)</code> <code>:FireExcept(player, ...)</code> <code>:FireList(players, ...)</code> <code>:Connect(function(player, ...))</code></td>
+					<td class="wrap"><code>:Fire(...)</code> <code>:Connect(function(...))</code> <code>:Once</code> <code>:Wait</code></td>
+				</tr>
+				<tr>
+					<td><code>Framework.RemoteProperty(value)</code></td>
+					<td class="wrap"><code>:Set(value)</code> <code>:SetFor(player, value)</code> <code>:Get()</code> <code>:GetFor(player)</code> <code>:ClearFor(player)</code></td>
+					<td class="wrap"><code>:Get()</code> <code>:Observe(function(value))</code> <code>.Changed</code></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<ul>
+		<li><code>Framework.RemoteSignal(true)</code> makes an unreliable signal for things sent every frame.</li>
+		<li><code>self.Server</code> inside a <code>Client</code> method is the service itself.</li>
+		<li><code>Set</code> replaces the value for everyone and drops per-player values. <code>SetFor</code> gives one player their own value.</li>
+		<li>Remote signals and properties can only be created on the server.</li>
+	</ul>
+	<div class="callout callout-warn">
+		<strong>Never trust the client</strong>
+		Arguments from the client are whatever the client decided to send. Type them <code>any</code> and check them before use.
+	</div>
+</section>
+
+<section id="players">
+	<h2>Players and characters</h2>
+	<pre><code class="luau">Framework.OnPlayerAdded(function(player: Player, trove: Types.Trove) end)
+Framework.OnPlayerRemoving(function(player: Player) end)
+Framework.OnCharacterAdded(function(character: Model, player: Player, trove: Types.Trove) end)
+Framework.GetPlayerTrove(player)
+Framework.GetCharacterTrove(character)</code></pre>
+	<p>Players and characters that already exist are passed in straight away. The player trove is cleaned when the player leaves, the character trove when the character is removed.</p>
+	<p>On the client <code>OnPlayerAdded</code> covers everyone, <code>OnCharacterAdded</code> covers only your own character.</p>
+</section>
+
+<section id="signal-trove">
+	<h2>Signal and Trove</h2>
+	<pre><code class="luau">local changed: Types.Signal&lt;number&gt; = Framework.Signal.new()
+local connection = changed:Connect(function(value: number) end)
+changed:Once(function(value: number) end)
+changed:Fire(5)
+local value = changed:Wait()
+connection:Disconnect()
+changed:DisconnectAll()</code></pre>
+	<pre><code class="luau">local trove = Framework.Trove.new()
+trove:Add(instance)
+trove:Add(function() end)
+trove:Add(object, "MethodName")
+trove:Connect(signal, callback)
+local child = trove:Extend()
+trove:AttachToInstance(instance)
+trove:Remove(object)
+trove:Clean()</code></pre>
+	<p>A trove cleans up Instances, connections, functions, threads, and any table with <code>Destroy</code>, <code>Disconnect</code> or <code>Clean</code>. It cleans in reverse order of adding.</p>
+</section>
+
+<section id="types">
+	<h2>Global types</h2>
+	<p>Two files, both at the top of the MainModule.</p>
+	<h3 id="types-file">Types</h3>
+	<p>Where every shared type lives. Any script can use them:</p>
+	<pre><code class="luau">local Types = require(script:FindFirstAncestor("MainModule").Types)
+
+local options: Types.VFXOptions = { Duration = 2 }</code></pre>
+	<p>Already in there:</p>
+	<ul class="chips">
+		<li><code>Signal&lt;T...&gt;</code></li>
+		<li><code>Connection</code></li>
+		<li><code>Trove</code></li>
+		<li><code>RemoteSignal&lt;T...&gt;</code></li>
+		<li><code>RemoteProperty&lt;T&gt;</code></li>
+		<li><code>ClientRemoteSignal&lt;T...&gt;</code></li>
+		<li><code>ClientRemoteProperty&lt;T&gt;</code></li>
+		<li><code>PlayerData</code></li>
+		<li><code>DataPath</code></li>
+		<li><code>DataService</code></li>
+		<li><code>DataController</code></li>
+		<li><code>State&lt;Context&gt;</code></li>
+		<li><code>StateMachine&lt;Context&gt;</code></li>
+		<li><code>AnimationSource</code></li>
+		<li><code>AnimationOptions</code></li>
+		<li><code>AnimationHandler</code></li>
+		<li><code>SoundSource</code></li>
+		<li><code>SoundOptions</code></li>
+		<li><code>SoundHandler</code></li>
+		<li><code>VFXTarget</code></li>
+		<li><code>VFXOptions</code></li>
+		<li><code>VFXService</code></li>
+		<li><code>VFXController</code></li>
+		<li><code>PreloadController</code></li>
+	</ul>
+	<h3 id="index-file">Index</h3>
+	<p>Says what each <code>Framework.X.Y</code> is. Names listed there get autocomplete and checking; everything else stays loose and never errors.</p>
+	<pre><code class="luau">export type Services = {
+	VFXService: Types.VFXService,
+	[string]: any,
+}
+
+export type Common = {
+	AnimationConfig: typeof(require(script.Parent.Common.Config.AnimationConfig)),
+	[string]: any,
+}</code></pre>
+	<p>Two ways to list something:</p>
+	<ul>
+		<li><code>typeof(require(...))</code> for a module that does not require the framework. That is the data and config in <code>Common</code>. Those modules may still require <code>Types</code>.</li>
+		<li>A type written in <code>Types</code> for a module that does require the framework, which is every service, controller and handler. Using <code>typeof(require(...))</code> on those sends the type checker in a circle and it gives up.</li>
+	</ul>
+	<p>Without <code>--!strict</code>, a value you do not annotate is loose in the checker even when autocomplete shows its type.</p>
+</section>
+
+<section id="classes">
+	<h2>Classes</h2>
+	<p>Classes are ordinary Luau. Put them in <code>Common/Shared/Classes</code> or <code>Modules</code>, declare the instance type in <code>Types</code>, and every script sees the fields.</p>
+	<pre><code class="luau">export type Enemy = {
+	Health: number,
+	Model: Model,
+	TakeDamage: (self: Enemy, amount: number) -&gt; (),
+}</code></pre>
+	<pre><code class="luau">local Types = require(script:FindFirstAncestor("MainModule").Types)
+
+local Enemy = {}
+Enemy.__index = Enemy
+
+function Enemy.new(model: Model): Types.Enemy
+	local self = setmetatable({
+		Health = 100,
+		Model = model,
+	}, Enemy)
+	return self :: any
+end
+
+function Enemy:TakeDamage(amount: number)
+	self.Health -= amount
+end
+
+return Enemy</code></pre>
+	<p>Instance references at the top of a file are fine too. Anything loaded at boot may wait while it loads:</p>
+	<pre><code class="luau">local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+local ScreenGui = PlayerGui:WaitForChild("Hud") :: ScreenGui
+local CoinsLabel = ScreenGui:WaitForChild("Coins") :: TextLabel</code></pre>
+</section>
+
+<section id="assets">
+	<h2>Assets</h2>
+	<p class="section-intro">Assets are made in Studio, not in files. Rojo leaves everything inside the asset folders alone, so anything you or the team drop in there stays.</p>
+	<p>Animations, sounds and effects are found by name in their folder, so nothing needs registering:</p>
+	<pre><code class="luau">AnimationHandler.Play(character, "Punch")
+SoundHandler.Play("Hit")
+VFXService:Play("HitSpark", character)</code></pre>
+	<p>Folders inside a category are only for organising. If the same name exists twice, give the path instead, and the error tells you which:</p>
+	<pre><code class="luau">AnimationHandler.Play(character, "Sword/Idle")
+AnimationHandler.Play(character, "Fist/Idle")</code></pre>
+	<p>For anything else, <code>Framework.GetAsset</code> does the same lookup in any category, and <code>Framework.Assets</code> is the folder itself:</p>
+	<pre><code class="luau">local sword = Framework.GetAsset("Models", "Sword"):Clone()
+local hud = Framework.Assets.UI.Hud
+local dummy = Framework.ServerAssets.Dummy:Clone()</code></pre>
+	<p>A missing name is an error that says what it looked for and where. <code>Assets</code> is moved into the client copy at boot, so always reach it through <code>Framework.Assets</code>, never by path.</p>
+
+	<h3 id="vfx-templates">VFX templates</h3>
+	<p>Put a template in <code>Common/Shared/Assets/VFX</code>. It can be an <strong>Attachment</strong>, a <strong>BasePart</strong> or a <strong>Model</strong>.</p>
+	<div class="table-wrap">
+		<table>
+			<thead>
+				<tr><th>Attribute</th><th>On</th><th>Meaning</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><code>EmitCount</code></td><td>ParticleEmitter</td><td>burst this many particles when played</td></tr>
+				<tr><td><code>EmitDelay</code></td><td>ParticleEmitter</td><td>wait this long before the burst</td></tr>
+				<tr><td><code>Duration</code></td><td>the template</td><td>how long emitters, beams, trails and lights that are switched on stay on</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<p>Sounds inside a template play with it. The effect cleans itself up once its particles and sounds have finished.</p>
+</section>
+
+<section id="animation">
+	<h2>Animation</h2>
+	<p><code>AnimationService</code> sets the Workspace attribute <code>RbxLegacyAnimationBlending</code> when the server initialises. <code>Common/Config/AnimationConfig</code> holds the switch, on by default:</p>
+	<pre><code class="luau">return {
+	LegacyBlending = true,
+}</code></pre>
+	<p><code>AnimationHandler</code> plays animations on any character, on either side. It takes the name of an <code>Animation</code> in <code>Assets/Animations</code>, or the <code>Animation</code> itself, and keeps one track per animation per character.</p>
+	<pre><code class="luau">local AnimationHandler = Framework.Shared.AnimationHandler
+
+local track = AnimationHandler.Play(character, "Punch")
+AnimationHandler.Play(character, "Idle", { Looped = true, FadeTime = 0 })
+AnimationHandler.Stop(character, "Punch")
+AnimationHandler.StopAll(character)
+AnimationHandler.IsPlaying(character, "Punch")
+AnimationHandler.GetTrack(character, "Punch")
+AnimationHandler.Preload(character, { "Punch", "Kick" })</code></pre>
+	<p>Options: <code>FadeTime</code>, <code>Weight</code>, <code>Speed</code>, <code>Priority</code>, <code>Looped</code>.</p>
+	<p><code>Preload</code> loads tracks onto one character ahead of time. An Animator holds 256 tracks at most, so preload what that character uses, not everything.</p>
+</section>
+
+<section id="sound">
+	<h2>Sound</h2>
+	<pre><code class="luau">local SoundHandler = Framework.Shared.SoundHandler
+
+SoundHandler.Play("Click")
+SoundHandler.Play("Hit", character.PrimaryPart, { Volume = 0.5 })
+SoundHandler.PlayAt("Explosion", position)</code></pre>
+	<p>It takes the name of a <code>Sound</code> in <code>Assets/Sounds</code>, or the <code>Sound</code> itself. No parent means it plays for the listener with no position. A sound that is not looped removes itself when it ends.</p>
+	<p>Options: <code>Volume</code>, <code>PlaybackSpeed</code>, <code>Looped</code>, <code>TimePosition</code>.</p>
+</section>
+
+<section id="vfx">
+	<h2>VFX</h2>
+	<p>On the server, for everyone:</p>
+	<pre><code class="luau">local VFXService = Framework.Services.VFXService
+
+VFXService:Play("HitSpark", character)
+VFXService:Play("Explosion", CFrame.new(0, 5, 0))
+VFXService:PlayFor({ player }, "LevelUp", character)
+VFXService:PlayExcept(attacker, "Slash", character, { Offset = CFrame.new(0, 0, -2) })</code></pre>
+	<p>On the client, for that player only:</p>
+	<pre><code class="luau">local effect = Framework.Controllers.VFXController:Play("Slash", character)</code></pre>
+	<p>The target is a <code>CFrame</code>, a <code>Vector3</code>, a part, an attachment or a model. Given an instance the effect follows it; pass <code>Follow = false</code> to leave it where it started. A character is followed at its root part.</p>
+	<p>Options: <code>Offset</code>, <code>Duration</code>, <code>Follow</code>.</p>
+	<p>Send a character, not a <code>Player</code>. An effect aimed at something the client has not streamed in is skipped.</p>
+</section>
+
+<section id="preloading">
+	<h2>Preloading</h2>
+	<p><code>PreloadController</code> loads these in the background as soon as the client starts:</p>
+	<ul>
+		<li>every <code>Animation</code> in <code>Assets/Animations</code></li>
+		<li>every <code>Sound</code> in <code>Assets/Sounds</code> and inside <code>Assets/VFX</code></li>
+	</ul>
+	<pre><code class="luau">local PreloadController = Framework.Controllers.PreloadController
+
+PreloadController.Progressed:Connect(function(loadedCount: number, totalCount: number) end)
+PreloadController:WaitUntilComplete()
+PreloadController:Queue({ instance, instance })</code></pre>
+	<p><code>Common/Config/PreloadConfig</code> switches animations and sounds on or off and sets the batch size.</p>
+</section>
+
+<section id="player-data">
+	<h2>Player data</h2>
+	<p class="section-intro"><code>DataService</code> saves player data with ProfileStore: one session per player, locked to the server they are on, saved automatically and again when they leave or the server shuts down.</p>
+	<div class="callout">
+		<strong>Your table goes in <code>Common/Data/PlayerDataTemplate</code></strong>
+		Whatever you put there is what a new player starts with, and anything you add later is filled in for existing players when they join. <code>Types.PlayerData</code> follows that table by itself, so its keys autocomplete everywhere.
+	</div>
+	<p>Only plain values: numbers, strings, booleans and tables of those. No Instances, Vector3, CFrame or Color3, and no list with gaps.</p>
+	<h3 id="player-data-server">On the server</h3>
+	<pre><code class="luau">local DataService = Framework.Services.DataService
+
+local data = DataService:GetData(player)
+local data = DataService:WaitForData(player)
+
+DataService:Get(player, "Stats.Level")
+DataService:Set(player, "Stats.Level", 5)
+DataService:Increment(player, "Coins", 25)
+DataService:Update(player, "Inventory", function(inventory)
+	table.insert(inventory, "Sword")
+	return inventory
+end)
+
+DataService.Loaded:Connect(function(player: Player, data: Types.PlayerData) end)
+DataService.Changed:Connect(function(player: Player, keys: { string | number }, value: any) end)</code></pre>
+	<ul>
+		<li><code>GetData</code> is <code>nil</code> until the player's data has loaded and after they leave. <code>WaitForData</code> waits for it and gives <code>nil</code> if the player leaves first.</li>
+		<li><code>Set</code>, <code>Update</code> and <code>Increment</code> do nothing for a player with no data and say so: <code>false</code>, <code>nil</code>, <code>nil</code>.</li>
+		<li>Change data through <code>Set</code>, <code>Update</code> or <code>Increment</code>; they tell the client. If you edit the table directly, call <code>DataService:Sync(player)</code> afterwards to resend everything.</li>
+		<li>A path is <code>"Stats.Level"</code>, or a list of keys when one of them is a number or contains a dot: <code>{ "Inventory", 1 }</code>.</li>
+		<li><code>DataService:GetProfile(player)</code> is the raw ProfileStore profile for anything not covered here.</li>
+	</ul>
+	<h3 id="player-data-client">On the client</h3>
+	<p>Each player has a live copy of their own data and nobody else's:</p>
+	<pre><code class="luau">local DataController = Framework.Controllers.DataController
+
+local data = DataController:GetData()
+DataController:Get("Stats.Level")
+DataController:Observe("Coins", function(coins: number) end)
+DataController.Changed:Connect(function(keys: { string | number }, value: any) end)</code></pre>
+	<p><code>GetData</code> waits until the data has arrived. <code>Observe</code> runs straight away with the current value, then again whenever that value, something inside it, or something it sits inside changes. The client copy is read-only: changing it does nothing on the server.</p>
+	<h3 id="player-data-settings">Settings</h3>
+	<p><code>Common/Config/DataConfig</code> has the DataStore name and key prefix. Changing either after launch points every player at a fresh, empty save.</p>
+	<p>In Studio, data only saves if <strong>Enable Studio Access to API Services</strong> is on for the place. With it off, ProfileStore keeps everything in memory for that play session and prints one line saying so.</p>
+</section>
+
+<section id="state-machine">
+	<h2>StateMachine</h2>
+	<p><code>Framework.Shared.StateMachine</code> works for anything on either side:</p>
+	<pre><code class="luau">local StateMachine = Framework.Shared.StateMachine
+
+local machine = StateMachine.new({
+	Closed = {},
+	Open = {
+		Enter = function(door: Model, previousStateName: string?) end,
+		Exit = function(door: Model, nextStateName: string?) end,
+	},
+}, door)
+
+machine:Transition("Open")
+machine.Current
+machine.Changed:Connect(function(stateName: string, previousStateName: string?) end)
+machine:Destroy()</code></pre>
+	<p>The second argument is handed to every <code>Enter</code> and <code>Exit</code>. Both are optional. Moving to the state it is already in does nothing, a state name that does not exist is an error, and <code>Destroy</code> exits the current state.</p>
+</section>
+
+<section id="admin">
+	<h2>Admin commands</h2>
+	<p>Cmdr is installed. Press <kbd>F2</kbd> in game to open the console.</p>
+	<p>Only the user ids in <code>Common/Config/AdminConfig</code> can use it. For everyone else the console never opens, and the server refuses every command they send regardless.</p>
+	<pre><code class="luau">return {
+	ActivationKeys = { Enum.KeyCode.F2 },
+	Admins = {
+		123456789, -- your name
+	},
+}</code></pre>
+	<p><code>Framework.Shared.AdminUtil.IsAdmin(player)</code> answers the same question anywhere else in the game.</p>
+	<p>All of Cmdr's built-in commands are registered: <code>kick</code>, <code>ban</code>, <code>kill</code>, <code>teleport</code>, <code>respawn</code>, <code>announce</code> and the rest. Type <code>help</code> in the console for the list.</p>
+	<p>Your own commands go in <code>Server/Commands</code>, two modules each, the way Cmdr expects: <code>Name</code> describes the command and <code>NameServer</code> does the work. The description is sent to clients; the <code>Server</code> half is not.</p>
+</section>
+
+<section id="environment">
+	<h2>Environment</h2>
+	<p><code>Environment</code> holds whatever has to end up in one of Roblox's own containers. Its two folders say where the contents go:</p>
+	<ul>
+		<li><code>Environment/StarterGui</code> goes to StarterGui: ScreenGuis and anything else every player's PlayerGui should get.</li>
+		<li><code>Environment/StarterPlayerScripts</code> goes to StarterPlayerScripts: LocalScripts that run once per player. The client loader lives here.</li>
+	</ul>
+	<p>The move happens the instant the server starts, before any player has joined. If something with the same name is already in the real container, the one from <code>Environment</code> replaces it, so a custom <code>PlayerModule</code> here wins over Roblox's default one.</p>
+	<p>Like assets, these are made in Studio and Rojo leaves them alone. Two things to know:</p>
+	<ul>
+		<li>A ScreenGui only shows in the Studio viewport while it sits in the real StarterGui. Drag it there to edit it, drag it back when you are done.</li>
+		<li>A script in here is not inside the MainModule once the game is running, so it reaches the framework the way an outside script does: <code>require(game.ReplicatedStorage:WaitForChild("MainModule"))</code>, then <code>Framework.WaitForStart()</code>.</li>
+	</ul>
+</section>
+
+<section id="config">
+	<h2>Config and data</h2>
+	<p>Settings go in <code>Common/Config</code>, data modules in <code>Common/Data</code>, enum tables in <code>Common/Enums</code>. Add a module to <code>Index</code> to get autocomplete on its names.</p>
+	<div class="table-wrap">
+		<table>
+			<thead>
+				<tr><th>Module</th><th>Holds</th><th>Default</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><code>AdminConfig</code></td><td>console keys and admin user ids</td><td class="wrap"><code>ActivationKeys = { Enum.KeyCode.F2 }</code></td></tr>
+				<tr><td><code>AnimationConfig</code></td><td>legacy animation blending</td><td class="wrap"><code>LegacyBlending = true</code></td></tr>
+				<tr><td><code>DataConfig</code></td><td>DataStore name and key prefix</td><td class="wrap"><code>StoreName = "PlayerData"</code>, <code>KeyPrefix = "Player_"</code></td></tr>
+				<tr><td><code>PreloadConfig</code></td><td>what to preload and how many at once</td><td class="wrap"><code>Animations = true</code>, <code>Sounds = true</code>, <code>BatchSize = 16</code></td></tr>
+				<tr><td><code>PlayerDataTemplate</code></td><td>what a new player starts with</td><td class="wrap">empty, fill it in</td></tr>
+			</tbody>
+		</table>
+	</div>
+</section>
+
+<section id="checking">
+	<h2>Checking the code</h2>
+	<p>Tools are pinned in <code>aftman.toml</code>: Rojo 7.7.0, selene 0.28.0 and luau-lsp 1.56.2.</p>
+	<pre><code class="sh">rojo sourcemap default.project.json --output sourcemap.json
+luau-lsp analyze --sourcemap=sourcemap.json --defs=globalTypes.d.luau --flag:LuauSolverV2=false --ignore="**/Packages/**" src loader
+selene src loader</code></pre>
+	<p><code>globalTypes.d.luau</code> is the Roblox API definition file from <a href="https://github.com/JohnnyMorganz/luau-lsp">luau-lsp</a>. It is not committed.</p>
+	<p>Cmdr is written with newer Luau syntax than the pinned tools understand, which is one reason <code>Packages</code> is skipped by the type check and lint. An editor may underline its files; that is the editor being behind, not a problem in the game.</p>
+</section>
+
+<section id="credits">
+	<h2>Credits</h2>
+	<p>Two libraries are included as unmodified copies in <code>Server/Packages</code>. Everything else is written for this project.</p>
+	<div class="table-wrap">
+		<table>
+			<thead>
+				<tr><th>Library</th><th>Author</th><th>Version</th><th>Licence</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><a href="https://github.com/MadStudioRoblox/ProfileStore">ProfileStore</a></td><td>loleris (MAD STUDIO)</td><td>commit <code>45c9847</code></td><td>Apache-2.0</td></tr>
+				<tr><td><a href="https://github.com/evaera/Cmdr">Cmdr</a></td><td>evaera</td><td>v1.13.1, commit <code>abd8564</code></td><td>MIT</td></tr>
+			</tbody>
+		</table>
+	</div>
+</section>
+
+		</article>
+		<footer class="footer">
+			<span>MHNRFrame</span>
+			<a href="#overview">Back to top</a>
+		</footer>
+	</main>
+</div>
+
+<script>
+(function () {
+	var root = document.documentElement;
+	var body = document.body;
+
+	var KEYWORDS = new Set(["and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local", "nil", "not", "or", "repeat", "return", "then", "true", "until", "while", "continue", "export", "type"]);
+	var BUILTINS = new Set(["game", "script", "workspace", "Enum", "Instance", "Vector3", "CFrame", "Color3", "UDim2", "task", "require", "print", "warn", "error", "pcall", "setmetatable", "getmetatable", "table", "string", "math", "coroutine", "os", "self", "typeof"]);
+	var TYPE_NAMES = new Set(["number", "boolean", "any", "never", "unknown", "thread"]);
+	var TOKEN = /(--\[(=*)\[[\s\S]*?\]\2\]|--[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`|\[(=*)\[[\s\S]*?\]\4\])|(0[xX][\da-fA-F_]+|\d[\d_]*(?:\.[\d_]+)?(?:[eE][+-]?\d+)?)|([A-Za-z_]\w*)|(\s+)|([\s\S])/g;
+
+	function escapeHtml(text) {
+		return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	}
+
+	function wrap(kind, text) {
+		return '<span class="tk-' + kind + '">' + escapeHtml(text) + "</span>";
+	}
+
+	function highlightLuau(source) {
+		var output = "";
+		var lastIdentifierKind = null;
+		var genericDepth = 0;
+		var match;
+		TOKEN.lastIndex = 0;
+		while ((match = TOKEN.exec(source))) {
+			var text = match[0];
+			if (match[1]) {
+				output += wrap("comment", text);
+				continue;
+			}
+			if (match[3]) {
+				output += wrap("string", text);
+				lastIdentifierKind = null;
+				continue;
+			}
+			if (match[5]) {
+				output += wrap("number", text);
+				lastIdentifierKind = null;
+				continue;
+			}
+			if (match[6]) {
+				var before = source.slice(0, match.index);
+				var trimmed = before.replace(/[ \t]+$/, "");
+				var hadSpace = trimmed.length !== before.length;
+				var after = source.slice(match.index + text.length);
+				var kind = null;
+				if (KEYWORDS.has(text)) {
+					kind = "keyword";
+				} else if (TYPE_NAMES.has(text)) {
+					kind = "type";
+				} else if (/::$|->$/.test(trimmed) || (/[^:]:$/.test(trimmed) && hadSpace)) {
+					kind = "type";
+				} else if (lastIdentifierKind === "type" && !hadSpace && /\.$/.test(trimmed)) {
+					kind = "type";
+				} else if (genericDepth > 0 && /[<,|]$/.test(trimmed)) {
+					kind = "type";
+				} else if (BUILTINS.has(text)) {
+					kind = "builtin";
+				} else if (/^\(/.test(after)) {
+					kind = "func";
+				}
+				output += kind ? wrap(kind, text) : escapeHtml(text);
+				lastIdentifierKind = kind;
+				continue;
+			}
+			if (match[7]) {
+				output += text;
+				continue;
+			}
+			if (text === "<" && lastIdentifierKind === "type") {
+				genericDepth += 1;
+			} else if (text === ">" && genericDepth > 0) {
+				genericDepth -= 1;
+			} else if (text !== "." && text !== "?" && text !== "," && text !== "|") {
+				lastIdentifierKind = null;
+			}
+			output += escapeHtml(text);
+		}
+		return output;
+	}
+
+	var COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6a2.5 2.5 0 0 0-2.5-2.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></svg>';
+	var CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
+	function copyText(text) {
+		if (navigator.clipboard && window.isSecureContext) {
+			return navigator.clipboard.writeText(text);
+		}
+		return new Promise(function (resolve, reject) {
+			var area = document.createElement("textarea");
+			area.value = text;
+			area.setAttribute("readonly", "");
+			area.style.position = "fixed";
+			area.style.opacity = "0";
+			document.body.appendChild(area);
+			area.select();
+			try {
+				document.execCommand("copy");
+				resolve();
+			} catch (error) {
+				reject(error);
+			}
+			area.remove();
+		});
+	}
+
+	document.querySelectorAll("pre > code").forEach(function (code) {
+		var pre = code.parentElement;
+		var language = code.className || "text";
+		var source = code.textContent;
+		if (language === "luau") {
+			code.innerHTML = highlightLuau(source);
+		}
+
+		var block = document.createElement("div");
+		block.className = "code-block";
+		pre.parentNode.insertBefore(block, pre);
+		block.appendChild(pre);
+
+		if (language !== "text") {
+			var label = document.createElement("span");
+			label.className = "code-label";
+			label.textContent = language === "sh" ? "shell" : language;
+			block.appendChild(label);
+		}
+
+		var button = document.createElement("button");
+		button.type = "button";
+		button.className = "copy-button";
+		button.setAttribute("aria-label", "Copy code");
+		button.innerHTML = COPY_ICON;
+		button.addEventListener("click", function () {
+			copyText(source).then(function () {
+				button.classList.add("copied");
+				button.innerHTML = CHECK_ICON;
+				setTimeout(function () {
+					button.classList.remove("copied");
+					button.innerHTML = COPY_ICON;
+				}, 1400);
+			}, function () {});
+		});
+		block.appendChild(button);
+	});
+
+	document.querySelectorAll(".article section[id] > h2, .article h3[id]").forEach(function (heading) {
+		var id = heading.id || heading.parentElement.id;
+		var anchor = document.createElement("a");
+		anchor.className = "anchor";
+		anchor.href = "#" + id;
+		anchor.setAttribute("aria-label", "Link to this section");
+		anchor.textContent = "#";
+		heading.appendChild(anchor);
+	});
+
+	var THEME_KEY = "mhnrframe-theme";
+	var darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+	function getTheme() {
+		var explicitTheme = root.getAttribute("data-theme");
+		if (explicitTheme) {
+			return explicitTheme;
+		}
+		return darkQuery.matches ? "dark" : "light";
+	}
+
+	document.getElementById("theme-button").addEventListener("click", function () {
+		var nextTheme = getTheme() === "dark" ? "light" : "dark";
+		root.setAttribute("data-theme", nextTheme);
+		try {
+			localStorage.setItem(THEME_KEY, nextTheme);
+		} catch (error) {}
+	});
+
+	var menuButton = document.getElementById("menu-button");
+	function setNavOpen(isOpen) {
+		body.classList.toggle("nav-open", isOpen);
+		menuButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+	}
+	menuButton.addEventListener("click", function () {
+		setNavOpen(!body.classList.contains("nav-open"));
+	});
+	document.getElementById("overlay").addEventListener("click", function () {
+		setNavOpen(false);
+	});
+
+	var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav-group a"));
+	navLinks.forEach(function (link) {
+		link.addEventListener("click", function () {
+			setNavOpen(false);
+		});
+	});
+
+	var filterInput = document.getElementById("nav-filter");
+	var emptyMessage = document.getElementById("nav-empty");
+	filterInput.addEventListener("input", function () {
+		var query = filterInput.value.trim().toLowerCase();
+		var visibleCount = 0;
+		document.querySelectorAll(".nav-group").forEach(function (group) {
+			var groupVisible = 0;
+			group.querySelectorAll("a").forEach(function (link) {
+				var isMatch = !query || link.textContent.toLowerCase().indexOf(query) !== -1;
+				link.hidden = !isMatch;
+				if (isMatch) {
+					groupVisible += 1;
+				}
+			});
+			group.hidden = groupVisible === 0;
+			visibleCount += groupVisible;
+		});
+		emptyMessage.style.display = visibleCount === 0 ? "block" : "none";
+	});
+	filterInput.addEventListener("keydown", function (event) {
+		if (event.key === "Enter") {
+			var firstVisible = navLinks.filter(function (link) {
+				return !link.hidden;
+			})[0];
+			if (firstVisible) {
+				firstVisible.click();
+				location.hash = firstVisible.getAttribute("href");
+				filterInput.blur();
+			}
+		}
+		if (event.key === "Escape") {
+			filterInput.value = "";
+			filterInput.dispatchEvent(new Event("input"));
+			filterInput.blur();
+		}
+	});
+	document.addEventListener("keydown", function (event) {
+		var target = event.target;
+		var isTyping = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+		if (event.key === "/" && !isTyping) {
+			event.preventDefault();
+			if (window.innerWidth <= 860) {
+				setNavOpen(true);
+			}
+			filterInput.focus();
+		}
+	});
+
+	var linkById = {};
+	navLinks.forEach(function (link) {
+		linkById[link.getAttribute("href").slice(1)] = link;
+	});
+	var sections = Array.prototype.slice.call(document.querySelectorAll(".article section[id]"));
+	var activeLink = null;
+	function setActive(id) {
+		var link = linkById[id];
+		if (!link || link === activeLink) {
+			return;
+		}
+		if (activeLink) {
+			activeLink.classList.remove("active");
+		}
+		link.classList.add("active");
+		activeLink = link;
+	}
+	function updateActive() {
+		var offset = 120;
+		var currentId = sections[0].id;
+		for (var index = 0; index < sections.length; index += 1) {
+			if (sections[index].getBoundingClientRect().top - offset <= 0) {
+				currentId = sections[index].id;
+			}
+		}
+		if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+			currentId = sections[sections.length - 1].id;
+		}
+		setActive(currentId);
+	}
+	var isTicking = false;
+	window.addEventListener("scroll", function () {
+		if (isTicking) {
+			return;
+		}
+		isTicking = true;
+		requestAnimationFrame(function () {
+			updateActive();
+			isTicking = false;
+		});
+	}, { passive: true });
+	updateActive();
+})();
+</script>
+</body>
+</html>

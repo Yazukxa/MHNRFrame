@@ -1,0 +1,15 @@
+{
+	"name": "MHNRFrame",
+	"globIgnorePaths": ["**/*.tmp.*"],
+	"tree": {
+		"$className": "DataModel",
+		"ServerScriptService": {
+			"MainModule": {
+				"$path": "src"
+			},
+			"Loader": {
+				"$path": "loader/Loader.server.luau"
+			}
+		}
+	}
+}

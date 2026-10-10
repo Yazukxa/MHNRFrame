@@ -1,0 +1,5 @@
+sourcemap.json
+*.rbxm
+*.rbxl
+*.rbxlx
+globalTypes.d.luau
